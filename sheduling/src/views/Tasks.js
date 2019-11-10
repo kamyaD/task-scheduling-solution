@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import '../assets/css/styles.css';
-import Navigations from '../components/Navigations';
-import Table from '../components/Table';
+import Navigations from './Navigations';
+import Table from './Table';
 
 class Task extends Component{
   render(){
