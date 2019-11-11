@@ -16,23 +16,15 @@ class Login extends Component {
     };
   }
 
-  isValid(){
-      const {errors, isValid}=validateInput(this.state);
-      if(!isValid){
-          this.setState(errors);
-      }
-      return isValid;
-  }
   onSubmit = e => {
     e.preventDefault();
-    if(this.isValid()){
         this.setState({errors: {}, isLoading: true});
         this.props.loginAction(this.state).then(
             (res)=> this.context.router.push('/tasks'),
             (err)=>this.setState({errors:err.data.errors})
         );
         
-    }
+    
   };
   onchange = e => {
     this.setState({ [e.target.name]: e.target.value });
