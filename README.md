@@ -10,7 +10,7 @@ Develop the frontend using React.js that consumes the backend  endpoints so that
 - Implement pagination by passing the page and limit
 
 ### How can this be manually tested?
-- clone the application and checkout to `develop` branch. cd into `schedule` directorry.
+- clone the application and  cd into `schedule` directorry.
 - run npm install to install dependencies
 - Access the application on the browser on `localhost:3001`
 - on the login page enter the following credentials `phone: 0722222222 and password: 123456`
