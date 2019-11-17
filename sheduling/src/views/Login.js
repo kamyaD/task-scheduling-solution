@@ -1,37 +1,30 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import * as Yup from "yup";
+import { withFormik } from "formik";
+
+import Field from "./Field";
 import "../assets/css/styles.css";
 import img1 from "../assets/img/mawingu.png";
-import validateInput from "./validations";
-import { connect } from "react-redux";
-import PropTypes from 'prop-types';
-import { loginAction } from "../redux/actions/loginAction";
+import * as authAction from "../store/Actions/authActions";
+
+const fields = [
+  {
+    name: "phone",
+    elementName: "input",
+    type: "tel",
+    placeholder: "Your Phone Number"
+  },
+  {
+    name: "password",
+    elementName: "input",
+    type: "password",
+    placeholder: "Your Password"
+  }
+];
 
 class Login extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      phone: "",
-      password: "",
-      errors: {}
-    };
-  }
-
-  onSubmit = e => {
-    e.preventDefault();
-        this.setState({errors: {}, isLoading: true});
-        this.props.loginAction(this.state).then(
-            (res)=> this.context.router.push('/tasks'),
-            (err)=>this.setState({errors:err.data.errors})
-        );
-        
-    
-  };
-  onchange = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
   render() {
-    const { phone, errors, password } = this.state;
-    console.log("phone", phone);
     return (
       <div className="mt-5 d-flex justify-content-center">
         <div className="mt-5 p-3 login-container shadow">
@@ -39,46 +32,35 @@ class Login extends Component {
             <img src={img1} alt="Mawingu Logo" />
             <h1 className="my-3">Admin Login</h1>
           </div>
-          <div className="login-body">
-            <form onSubmit={this.onSubmit}>
-              <div className="input-group mb-3">
-                <div className="input-group-prepend">
-                  <span className="input-group-text">
-                    <i className="fa fa-phone" aria-hidden="true"></i>
-                  </span>
+          <div className="login-form">
+            <div className="row">
+              <form onSubmit={
+                e =>{
+                  e.preventDefault();
+                  this.props.login(this.props.values.phone, this.props.values.password);
+                }
+              }>
+                {fields.map((f, i) => {
+                  return (
+                    <div className="col-md-12">
+                      <Field
+                        key={i}
+                        {...f}
+                        value={this.props.values[f.name]}
+                        name={f.name}
+                        onChange={this.props.handleChange}
+                        onBlur={this.props.handleBlur}
+                        touched={this.props.touched[f.name]}
+                        errors={this.props.errors[f.name]}
+                      />
+                    </div>
+                  );
+                })}
+                <div className="col-md-12">
+                  <button className="btn btn-primary">Login</button>
                 </div>
-                <input
-                  autoComplete="on"
-                  type="tel"
-                  className="form-control"
-                  placeholder="Phone"
-                  id="phone"
-                  name="phone"
-                  onChange={this.onChange}
-                />
-              </div>
-              <div className="input-group mb-3">
-                <div className="input-group-prepend">
-                  <span className="input-group-text">
-                    <i className="fa fa-lock" aria-hidden="true"></i>
-                  </span>
-                </div>
-                <input
-                  autoComplete="on"
-                  name="password"
-                  id="password"
-                  type="password"
-                  className="form-control is-invalid"
-                  placeholder="Password"
-                  onChange={this.onChange}
-                />
-                <div className="invalid-feedback">Password is required</div>
-              </div>
-
-              <button type="submit" className="btn btn-primary">
-                Login
-              </button>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       </div>
@@ -86,15 +68,32 @@ class Login extends Component {
   }
 }
 
-Login.propTypes={
-    loginAction: PropTypes.func.isRequired
-}
+const mapStateToProps = state => {
+  return {
+    auth: state.reducers
+  };
+};
 
-Login.contextTypes={
-    router: PropTypes.object.isRequired
-}
+const mapDispatchToProps = dispatch => {
+  return {
+    login: (phone, pass) => {
+      dispatch(authAction.login(phone, pass));
+    }
+  };
+};
 
 export default connect(
-  null,
-  { loginAction }
-)(Login);
+  mapStateToProps,
+  mapDispatchToProps
+)(
+  withFormik({
+    mapPropsToValues: () => ({
+      phone: "",
+      password: ""
+    }),
+    validationSchema: Yup.object().shape({
+      phone: Yup.string().required("You need to enter your Phone number"),
+      password: Yup.string().required("You need to enter your password")
+    })
+  })(Login)
+);
