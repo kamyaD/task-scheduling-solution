@@ -5,7 +5,7 @@ import Tasks from "./views/Tasks";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import { connect } from "react-redux";
 
-import adminWraper from "./views/AdminWrapper";
+import AdminWrapper from "./views/AdminWrapper";
 
 class App extends Component {
   render() {
@@ -16,9 +16,9 @@ class App extends Component {
             path="/"
             render={props => {
               return (
-                <adminWraper>
+                <AdminWrapper>
                   {this.props.auth.token ? <Tasks /> : <Login />}
-                </adminWraper>
+                </AdminWrapper>
               );
             }}
           />
@@ -30,7 +30,7 @@ class App extends Component {
 
 const mapStateToProps = state => {
   return {
-    auth: state.auth
+    auth: state.reducers
   };
 };
 

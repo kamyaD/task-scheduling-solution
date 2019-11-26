@@ -2,21 +2,23 @@ import API from "../../utils/api";
 
 export const login = (phone, password) => {
   return dispatch => {
-    API.login(phone, password, res => {
-      return {
+    API.login(phone, password).then(data => {
+      return dispatch({
         type: "LOGIN",
         payload: {
           phone,
-          password
+          token: data.accessToken,
+          userId: data.userId
         }
-      };
+      });
     });
   };
 };
 
-export const tasks = tasks => {
+export const tasks = data => {
+  console.log("AuthActions", data);
   return {
-    type: "TASKS",
-    payload: tasks
+    type: "GETTASKS",
+    payload: data
   };
 };
